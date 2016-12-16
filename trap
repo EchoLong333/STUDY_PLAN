@@ -3,37 +3,50 @@
 本文链接：http://codingstandards.iteye.com/blog/836588   （转载请注明出处）
  
 用途说明
-rap是一个shell内建命令，它用来在脚本中指定信号如何处理。比如，按Ctrl+C会使脚本终止执行，实际上系统发送了SIGINT信号给脚本进程，SIGINT信号的默认处理方式就是退出程序。如果要在Ctrl+C不退出程序，那么就得使用trap命令来指定一下SIGINT的处理方式了。trap命令不仅仅处理Linux信号，还能对脚本退出（EXIT）、调试（DEBUG）、错误（ERR）、返回（RETURN）等情况指定处理方式。
+rap是一个shell内建命令，它用来在脚本中指定信号如何处理。
+比如，按Ctrl+C会使脚本终止执行，实际上系统发送了SIGINT信号给脚本进程，SIGINT信号的默认处理方式就是退出程序。
+如果要在Ctrl+C不退出程序，那么就得使用trap命令来指定一下SIGINT的处理方式了。
+trap命令不仅仅处理Linux信号，还能对脚本退出（EXIT）、调试（DEBUG）、错误（ERR）、返回（RETURN）等情况指定处理方式。
 常用参数
        trap [-lp] [[arg] sigspec ...]
  
 格式：trap "commands" signals
-当shell接收到signals指定的信号时，执行commands命令。（The  command arg is to be read and executed when the shell receives signal(s) sigspec. ）
+当shell接收到signals指定的信号时，执行commands命令。
+（The  command arg is to be read and executed when the shell receives signal(s) sigspec. ）
  
 格式：trap signals
-如果没有指定命令部分，那么就将信号处理复原。比如 trap INT 就表明恢复Ctrl+C退出。（If arg is absent (and there is a single sigspec) or -, each specified signal is reset to its  original  disposition  (the value  it  had  upon  entrance  to  the  shell). ）
+如果没有指定命令部分，那么就将信号处理复原。比如 trap INT 就表明恢复Ctrl+C退出。
+（If arg is absent (and there is a single sigspec) or -, each specified signal is reset to its  original  disposition  (the value  it  had  upon  entrance  to  the  shell). ）
  
 格式：trap "" signals
-忽略信号signals，可以多个，比如 trap "" INT 表明忽略SIGINT信号，按Ctrl+C也不能使脚本退出。又如 trap "" HUP 表明忽略SIGHUP信号，即网络断开时也不能使脚本退出。（If arg is the null string the signal specified by each sigspec is ignored by the shell and by the commands it invokes. ）
+忽略信号signals，可以多个，比如 trap "" INT 表明忽略SIGINT信号，按Ctrl+C也不能使脚本退出。
+又如 trap "" HUP 表明忽略SIGHUP信号，即网络断开时也不能使脚本退出。
+（If arg is the null string the signal specified by each sigspec is ignored by the shell and by the commands it invokes. ）
  
 格式：trap -p
 格式：trap -p signal
-把当前的trap设置打印出来。（If arg is not present and -p  has  been supplied,  then  the trap commands associated with each sigspec are displayed.  If no arguments are supplied or if only -p is given, trap prints the list of commands associated  with  each  signal.）
+把当前的trap设置打印出来。
+（If arg is not present and -p  has  been supplied,  then  the trap commands associated with each sigspec are displayed.  If no arguments are supplied or if only -p is given, trap prints the list of commands associated  with  each  signal.）
  
 格式：trap -l
-把所有信号打印出来。（The  -l option  causes  the shell to print a list of signal names and their corresponding numbers.  Each sigspec is either a signal name defined in <signal.h>, or a signal number.  Signal names  are  case  insensitive and  the  SIG prefix is optional.） 
+把所有信号打印出来。
+（The  -l option  causes  the shell to print a list of signal names and their corresponding numbers.  Each sigspec is either a signal name defined in <signal.h>, or a signal number.  Signal names  are  case  insensitive and  the  SIG prefix is optional.） 
  
 格式：trap "commands" EXIT
-脚本退出时执行commands指定的命令。（If a sigspec is EXIT (0) the command arg is executed on exit from the shell.）
+脚本退出时执行commands指定的命令。
+（If a sigspec is EXIT (0) the command arg is executed on exit from the shell.）
  
 格式：trap "commands" DEBUG
-在脚本执行时打印调试信息，比如打印将要执行的命令及参数列表。（If a sigspec is DEBUG, the command arg is executed before every  simple  command,  for  command, case  command,  select command, every arithmetic for command, and before the first command executes in a shell function (see SHELL GRAMMAR above).  Refer to the description of the extdebug option to the  shopt builtin  for  details of its effect on the DEBUG trap.）
+在脚本执行时打印调试信息，比如打印将要执行的命令及参数列表。
+（If a sigspec is DEBUG, the command arg is executed before every  simple  command,  for  command, case  command,  select command, every arithmetic for command, and before the first command executes in a shell function (see SHELL GRAMMAR above).  Refer to the description of the extdebug option to the  shopt builtin  for  details of its effect on the DEBUG trap.）
  
 格式：trap "commands" ERR
-当命令出错，退出码非0，执行commands指定的命令。（If a sigspec is ERR, the command arg is executed whenever a simple command has a non-zero exit status, subject to the following conditions.  The ERR trap is not executed if the failed command is part of the command list immediately following a while or until keyword, part of the test in an if statement, part of a && or ┅Ι│ list, or if the command’s return  value is  being  inverted via !.  These are the same conditions obeyed by the errexit option.）
+当命令出错，退出码非0，执行commands指定的命令。
+（If a sigspec is ERR, the command arg is executed whenever a simple command has a non-zero exit status, subject to the following conditions.  The ERR trap is not executed if the failed command is part of the command list immediately following a while or until keyword, part of the test in an if statement, part of a && or ┅Ι│ list, or if the command’s return  value is  being  inverted via !.  These are the same conditions obeyed by the errexit option.）
  
 格式：trap "commands" RETURN
-当从shell函数返回、或者使用source命令执行另一个脚本文件时，执行commands指定的命令。（If a sigspec is RETURN, the command arg is executed each time a shell function or a script executed with the . or source    builtins  finishes  executing.   Signals  ignored  upon  entry  to the shell cannot be trapped or reset. Trapped signals that are not being ignored are reset to their original values in a child process when it is created.  The return status is false if any sigspec is invalid; otherwise trap returns true.）
+当从shell函数返回、或者使用source命令执行另一个脚本文件时，执行commands指定的命令。
+（If a sigspec is RETURN, the command arg is executed each time a shell function or a script executed with the . or source    builtins  finishes  executing.   Signals  ignored  upon  entry  to the shell cannot be trapped or reset. Trapped signals that are not being ignored are reset to their original values in a child process when it is created.  The return status is false if any sigspec is invalid; otherwise trap returns true.）
  
 使用示例
 示例一
