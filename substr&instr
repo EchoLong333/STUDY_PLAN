@@ -1,0 +1,33 @@
+Oracle中INSTR的用法： 
+INSTR方法的格式为
+INSTR(源字符串, 要查找的字符串, 从第几个字符开始, 要找到第几个匹配的序号),返回找到的位置，如果找不到则返回0.
+例如：INSTR('CORPORATE FLOOR','OR', 3, 2)中，
+源字符串为'CORPORATE FLOOR', 在字符串中查找'OR'，
+从第三个字符位置开始查找"OR"，取第三个字后第2个匹配项的位置。
+
+默认查找顺序为从左到右。当起始位置为负数的时候，从右边开始查找。
+所以SELECT INSTR('CORPORATE FLOOR', 'OR', -1, 1) "aaa" FROM DUAL的显示结果是
+
+Instring
+——————
+14
+
+oracle的substr函数的用法：
+ 取得字符串中指定起始位置和长度的字符串   substr( string, start_position, [ length ] )
+ 如:
+     substr('This is a test', 6, 2)     would return 'is'
+     substr('This is a test', 6)     would return 'is a test'
+     substr('TechOnTheNet', -3, 3)     would return 'Net'
+     substr('TechOnTheNet', -6, 3)     would return 'The'
+ 
+select substr('Thisisatest', -4, 2) value from dual
+
+综合应用：
+SELECT INSTR('CORPORATE FLOOR', 'OR', -1, 1) "Instring" FROM DUAL
+--INSTR(源字符串, 目标字符串, 起始位置, 匹配序号)
+SELECT INSTR('CORPORATE FLOOR','OR', 3, 2) "Instring" FROM DUAL
+
+SELECT INSTR('32.8,63.5',',', 1, 1) "Instring" FROM DUAL
+
+SELECT SUBSTR('32.8,63.5',INSTR('32.8,63.5',',', 1, 1)+1) "INSTRING" FROM DUAL
+SELECT SUBSTR('32.8,63.5',1,INSTR('32.8,63.5',',', 1, 1)-1) "INSTRING" FROM DUAL
