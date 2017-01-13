@@ -1,0 +1,153 @@
+(1)if1.sh #判断登陆用户是否是root
+
+#!/bin/bash
+test=$(env|grep LOGNAME |cut -d "=" -f 2)
+
+if [ "$test" == "root" ]
+   then
+       echo "当前用户是root"
+   else
+       echo "不是root用户"
+fi
+
+(2)if2.sh #判断输入的是否是目录
+
+#!/bin/bash
+read -t 30 -p "Please input a dir:" dir
+
+if [ -d "$dir" ]
+   then 
+       echo "Yes"
+   else
+       echo "No"
+fi
+
+(3)if3.sh #判断apache是否运行, 运行的话输出ok,没有运行的话重启apache
+
+#!/bin/bash
+
+test=$(ps -ef|grep httpd|grep -v grep)
+if [ -n "$test" ]
+   then 
+       echo "$(date) httpd is ok"
+   else
+       /etc/rc.d/init.d/httpd start &/dev/null
+       #重启apache服务,标准启动方式
+       echo "$(date)  restart httpd!!!"
+fi
+
+(4)if4.sh  #简单的计算器（加减乘除）
+
+#!/bin/bash
+
+read -t 30 -p "Please input num1:" num1
+read -t 30 -p "Please input num2:" num2
+read -t 30 -p "Please input a operator:" ope
+
+if [ -n "$num1" -a -n "$num2" -a -n "$ope" ]
+   then
+   test1=$(echo $num1|sed 's/[0-9]//g')
+   test2=$(echo $num2|sed 's/[0-9]//g')
+
+   if [ -z "$test1" -a -z "$test2" ]
+      then
+      if [ "$ope" == "+" ]
+	 then
+	 sum=$(($num1+$num2))
+      elif [ "$ope" == "-" ]
+	 then
+	 sum=$(($num1-$num2))
+      elif [ "$ope" == "*" ]
+	 then
+	 sum=$(($num1*num2))
+      elif [ "$ope" == "/" ]
+	 then
+	 sum=$(($num1/$num2))
+      else
+	 echo "Please enter a valid operator."
+	 exit 10
+      fi
+   else
+      echo "Please enter a valid value."
+      exit 11
+   fi
+else
+   echo "Please enter number."
+fi
+
+echo "$num1 $ope $num2 : $sum"
+
+(5)if5.sh #判断用户输入的是什么文件
+
+#!/bin/bash
+
+
+read -p "Please input a filename:" file
+if [ -z "$file" ]
+   then
+   echo "Error,please input a filename!"
+   exit 1
+elif [ ! -e "$file" ]
+   then 
+   echo "Your input is not a file!"
+elif [ -f "$file" ]
+   then 
+   echo "Regular file"
+elif [ -d "$file" ]
+   then 
+   echo "Directory!"
+else
+   echo "$file is other files!"
+fi
+
+(6)cleanup.sh #删除系统日志，且保留了message日志的最后部分
+#!/bin/bash
+#调用解释器
+
+LOG_DIR=/var/log
+ROOT_UID=0
+LINES=50
+E_XCD=86
+E_NOTROOT=87
+
+#如果不是root，抛出异常并退出
+if [ "$UID" -ne "$ROOT_UID" ]
+then
+   echo "Must be root to run this script."
+   exit $E_NOROOT
+fi
+
+#判断是否有参数
+if [ -n "$1" ]
+then
+   lines=$1
+else
+   lines=LINES
+fi
+
+cd $LOG_DIR
+#如果不能成功切换到目标目录，抛出异常并退出
+if [ `pwd` !="$LOG_DIR" ] # or if [ "$pwd" !="$LOG_DIR ]
+then
+   echo "Can't change to $LOG_DIR"
+   exit $E_XCD
+fi
+
+#更高效的方法：
+#
+#cd /var/log ||{
+   echo "Can't change to nessary directory." >&2
+#  exit $E_XCD
+#}
+
+#保存message的最后一部分
+tail -n $lines messages > msg.temp
+#替换原来的message达到清理的目的
+mv mesg.temp messages
+
+#清空wtmp
+cat /dev/null >wtmp
+echo "Log files cleaned up."
+
+exit 0
+#返回0表示脚本执行成功
