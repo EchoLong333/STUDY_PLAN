@@ -1,15 +1,7 @@
 慕课网
-(1)shell编程之变量--2016/12/30 
-(2)shell编程之运算符
-(3)shell编程之正则表达式
-(4)shell编程之环境变量配置文件--2017/1/6
-(5)shell编程之条件判断与流程控制--2017/1/13
-(年后)
-(6)shell典型应用之nginx和mysql应用状态分析
-(7)shell典型应用之应用日志分析
-(8)shell典型应用之主控脚本实现
-(9)shell典型应用之系统信息及运行状态获取
-(10)linux shell运维实战
+shell编程--2017/1/13
 
+(年后)
+shell典型应用
 ABS:shell script program
 
