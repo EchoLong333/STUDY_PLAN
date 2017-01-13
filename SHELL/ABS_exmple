@@ -1,0 +1,51 @@
+(1)cleanup.sh #删除系统日志，且保留了message日志的最后部分
+#!/bin/bash
+#调用解释器
+
+LOG_DIR=/var/log
+ROOT_UID=0
+LINES=50
+E_XCD=86
+E_NOTROOT=87
+
+#如果不是root，抛出异常并退出
+if [ "$UID" -ne "$ROOT_UID" ]
+then
+   echo "Must be root to run this script."
+   exit $E_NOROOT
+fi
+
+#判断是否有参数
+if [ -n "$1" ]
+then
+   lines=$1
+else
+   lines=LINES
+fi
+
+cd $LOG_DIR
+#如果不能成功切换到目标目录，抛出异常并退出
+if [ `pwd` !="$LOG_DIR" ] # or if [ "$pwd" !="$LOG_DIR ]
+then
+   echo "Can't change to $LOG_DIR"
+   exit $E_XCD
+fi
+
+#更高效的方法：
+#
+#cd /var/log ||{
+   echo "Can't change to nessary directory." >&2
+#  exit $E_XCD
+#}
+
+#保存message的最后一部分
+tail -n $lines messages > msg.temp
+#替换原来的message达到清理的目的
+mv mesg.temp messages
+
+#清空wtmp
+cat /dev/null >wtmp
+echo "Log files cleaned up."
+
+exit 0
+#返回0表示脚本执行成功
