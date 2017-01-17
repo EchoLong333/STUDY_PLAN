@@ -1,0 +1,27 @@
+(1)user_add.sh
+#!/bin/bash
+
+read -p "Please input user name:" name
+read -p "Please input the num of users:" num
+read -p "Please input the passwd of users:" passwd
+
+if [ ! -z "$name" -a ! -z "$num" -a ! -z "passwd" ]
+   then
+   y=$(echo $num|sed 's/[0-9]//g')
+   if [ -z "$y" ]
+   then
+       for((i=1;i<=num;i=i+1))
+          do
+            /usr/bin/useradd $name$i &>/dev/null
+            echo $passwd|usr/bin/passwd --stdin $name$i &/dev/null
+          done
+   fi
+fi
+
+(2)user_del.sh
+#!/ban/bash
+
+for i in (cat /ect/passwd|grep /bin/bash|grep -v root|cut -d ":" -f 1)
+   do
+     userdel -r $i
+   done
